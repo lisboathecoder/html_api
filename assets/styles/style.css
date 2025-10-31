@@ -1,0 +1,172 @@
+:root{
+    --bg-1: #0f1724;
+    --bg-2: #071129;
+    --card: #0b1220;
+    --muted: #9aa4b2;
+    --accent: #00d4ff;
+    --success: #2dd4bf;
+    --danger: #ff6b6b;
+    --radius: 12px;
+    --glass: rgba(255,255,255,0.03);
+}
+
+/* reset básico */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html,body { height: 100%; }
+
+/* fundo e tipografia */
+body{
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(0,212,255,0.06), transparent),
+                            linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    color: #e6eef6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 32px;
+}
+
+/* container central */
+.api-container{
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 20px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    align-items: start;
+}
+
+/* header simples */
+.header{
+    grid-column: 1 / -1;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom: 12px;
+}
+.header h1{
+    font-size: 1.45rem;
+    letter-spacing: -0.2px;
+}
+.header p { color: var(--muted); font-size: 0.95rem; }
+
+/* cards */
+.card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* painel principal */
+.api-list { display: flex; flex-direction: column; gap: 12px; }
+.endpoint{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:12px;
+    background: var(--glass);
+    border-radius: 10px;
+    transition: transform .12s ease, box-shadow .12s ease;
+}
+.endpoint:hover{ transform: translateY(-4px); box-shadow: 0 12px 30px rgba(2,6,23,0.5); }
+
+.endpoint .meta{ flex:1; }
+.endpoint h3{ font-size: 1.02rem; margin-bottom:4px; }
+.endpoint p{ color: var(--muted); font-size: .92rem; }
+
+/* badges e status */
+.badge{
+    background: rgba(255,255,255,0.03);
+    padding:6px 10px;
+    border-radius: 999px;
+    font-size: .85rem;
+    color: var(--muted);
+    border: 1px solid rgba(255,255,255,0.02);
+}
+.status {
+    padding:6px 8px;
+    border-radius: 8px;
+    font-size:.8rem;
+    color:#062022;
+    font-weight:600;
+}
+.status.success{ background: var(--success); }
+.status.warn{ background: #ffd166; color:#331f00; }
+.status.error{ background: var(--danger); color:#3b0000; }
+
+/* painel lateral */
+.sidebar { display:flex; flex-direction: column; gap:12px; }
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* imagens de recurso */
+img {
+   width: 30%;
+    height:auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+/* botões */
+.btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent), #6be7ff);
+    color: #022029;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+    box-shadow: 0 8px 20px rgba(3,12,20,0.45);
+    transition: transform .12s ease, opacity .12s ease;
+}
+.btn.secondary{
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.06);
+    color: var(--muted);
+    box-shadow:none;
+}
+.btn:active{ transform: translateY(1px); }
+
+/* blocos de código e respostas */
+pre, code{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+}
+pre{
+    background: rgba(2,6,23,0.6);
+    padding: 12px;
+    border-radius: 10px;
+    overflow: auto;
+    color: #dbeafe;
+    font-size: .9rem;
+    border: 1px solid rgba(255,255,255,0.02);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+/* inputs e busca */
+.input{
+    width:100%;
+    padding:10px 12px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+    color: #e6eef6;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+.input::placeholder{ color: rgba(230,238,246,0.45); }
+
+/* responsividade */
+@media (max-width: 900px){
+    .api-container{ grid-template-columns: 1fr; padding: 0 12px; }
+    .logo img{ width:48px; height:48px; }
+}
+
+/* utilitários rápidos */
+.row{ display:flex; gap:10px; align-items:center; }
+.small{ font-size:.85rem; color:var(--muted); }
