@@ -3,14 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon</title>
+    <title>Pokémon TCG Browser</title>
     <link rel="stylesheet" href="./assets/styles/style.css">
     <script src="./assets/js/script.js" defer></script>
 </head>
 <body>
-    <h1>Pokédex</h1>
-    <input id="nome" placeholder="Digite o nome do Pokemon" />
-    <button onclick="buscarPokemon()">Buscar</button>
-    <div id="imagem"></div>
+    <div class="api-container">
+        <header class="header">
+            <div class="logo row">
+                <img src="https://images.pokemontcg.io/base1/4.png" alt="Charizard" style="width:48px;height:48px"/>
+                <div>
+                    <h1>Pokémon TCG Browser</h1>
+                    <p class="small">Busque cartas por nome usando a API pública do API TCG</p>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn secondary" id="btnApiKey">API Key</button>
+                <a class="btn" href="https://docs.apitcg.com/api-reference/cards" target="_blank" rel="noreferrer">Docs</a>
+            </div>
+        </header>
+
+        <main class="card">
+            <div class="row" style="gap:12px; flex-wrap: wrap;">
+                <input id="searchInput" class="input" placeholder="Digite o nome da carta (ex: Charizard)" aria-label="Buscar carta por nome" />
+                <button class="btn" id="searchBtn">Buscar</button>
+                <button class="btn secondary" id="clearBtn">Limpar</button>
+                <select id="limitSelect" class="input" style="max-width:140px">
+                    <option value="12">12 por página</option>
+                    <option value="24">24 por página</option>
+                    <option value="48">48 por página</option>
+                    <option value="96">96 por página</option>
+                </select>
+                <select id="setSelect" class="input" style="max-width:220px">
+                    <option value="__all">Todos os sets</option>
+                </select>
+                <select id="raritySelect" class="input" style="max-width:200px">
+                    <option value="__all">Todas as raridades</option>
+                </select>
+                <label class="row small" style="gap:6px; user-select:none;">
+                    <input type="checkbox" id="hideNoImgToggle" /> Ocultar cartas sem imagem
+                </label>
+            </div>
+
+            <div id="statusBar" class="small" style="margin:10px 0 6px;"></div>
+
+            <div id="grid" class="grid"></div>
+
+            <div class="pagination row" style="justify-content: space-between; margin-top: 14px;">
+                <button class="btn secondary" id="prevBtn">&larr; Anterior</button>
+                <div class="small" id="pageInfo"></div>
+                <button class="btn secondary" id="nextBtn">Próxima &rarr;</button>
+            </div>
+        </main>
+
+        <!-- Modal simples para detalhes -->
+        <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-content card">
+                <button class="modal-close btn secondary" id="modalClose">Fechar</button>
+                <div id="modalBody"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

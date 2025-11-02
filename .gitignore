@@ -1,0 +1,56 @@
+# .gitignore para projeto web (HTML/API/Node)
+# Sistema operacional
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Node / JS
+node_modules/
+npm-debug.log*
+yarn-error.log
+.pnp/
+.pnp.js
+
+# Arquivos de ambiente / segredos
+.env
+.env.local
+.env.*.local
+
+# Build / artefatos
+dist/
+build/
+out/
+coverage/
+public/build/
+
+# Logs / caches
+logs/
+*.log
+.cache/
+tmp/
+*.tmp
+
+# IDEs / editores
+.vscode/
+.idea/
+*.suo
+*.user
+*.userprefs
+
+# Python (se houver)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos binários / compilados
+*.class
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Outros temporários
+*~
+*.swp
+*.bak
