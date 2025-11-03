@@ -32,6 +32,15 @@ npm start
 
 6) Use os filtros de Set e Raridade (observação: como o endpoint de sets está “Under construction” na API, as opções de filtro são derivadas dos resultados da página atual; para cobrir todos os sets/raridades possíveis, implemente um agregador no backend que percorra várias páginas e consolide as opções).
 
+## Publicando no GitHub Pages
+
+- Domínio: `https://lisboathecoder.github.io/html_api/`
+- Como o GitHub Pages é estático, o proxy Node não roda lá. O app detecta automaticamente `*.github.io` e desativa o proxy, passando a chamar a API diretamente.
+- Importante: se a API TCG não permitir CORS para o seu domínio, as requisições do navegador serão bloqueadas. Alternativas:
+  - Publicar um Worker/Function (Cloudflare/Netlify/Vercel) para atuar como proxy e configurar o endpoint no front-end (já suportado se você servir o app por um domínio com o proxy atrás).
+  - Usar o servidor local (`npm start`) durante o desenvolvimento ou para uso privado.
+- Dica: se precisar de filtros globais (todos os sets/raridades), mantenha o proxy (server.js) em um serviço com Node e a UI no GitHub Pages apontando para esse proxy.
+
 ## Observações importantes
 
 - Segurança da chave: o servidor local atua como proxy e injeta o header `x-api-key` a partir da variável de ambiente (`.env`). Isso evita expor a chave no front-end. Não faça commit do seu `.env`.

@@ -23,6 +23,7 @@
                 setOptions: [],
                 rarityOptions: [],
                     hideNoImage: false,
+                    customProxyBase: '',
     };
 
     // Elementos
@@ -63,6 +64,17 @@
         state.apiKey = key;
     }
 
+    function loadCustomProxy(){
+        return localStorage.getItem('apitcg_proxy_base') || '';
+    }
+
+    function saveCustomProxy(url){
+        const clean = (url || '').trim().replace(/\/$/, '');
+        if (clean) localStorage.setItem('apitcg_proxy_base', clean);
+        else localStorage.removeItem('apitcg_proxy_base');
+        state.customProxyBase = clean;
+    }
+
     // HTTP
     async function fetchJSON(url){
         if (!state.apiKey) throw new Error('API key não configurada');
@@ -86,7 +98,9 @@
         if (state.name) params.set('name', state.name);
         params.set('limit', String(state.limit));
         params.set('page', String(state.page));
-        const base = useProxy ? PROXY_BASE : DIRECT_BASE;
+        const base = (state.customProxyBase && state.customProxyBase.length)
+            ? state.customProxyBase
+            : (useProxy ? PROXY_BASE : DIRECT_BASE);
         return `${base}?${params.toString()}`;
     }
 
@@ -195,7 +209,9 @@
         try{
             el.modal.classList.remove('hidden');
             el.modalBody.innerHTML = '<p class="small">Carregando detalhes…</p>';
-            const base = useProxy ? PROXY_BASE : DIRECT_BASE;
+            const base = (state.customProxyBase && state.customProxyBase.length)
+                ? state.customProxyBase
+                : (useProxy ? PROXY_BASE : DIRECT_BASE);
             const url = `${base}/${encodeURIComponent(id)}`;
             const { data } = await fetchJSON(url);
             const card = data || {};
@@ -262,6 +278,10 @@
             <h2 id="modalTitle">Configurar API Key</h2>
             <p class="small" style="margin:6px 0 12px;">Sua chave será salva apenas neste navegador (localStorage). Para produção, use um backend proxy para manter a chave privada.</p>
             <input id="apiKeyInput" class="input" placeholder="x-api-key" value="${escapeHtml(curr)}" />
+            <div style="height:8px"></div>
+            <h3 class="small" style="margin:6px 0 4px;">URL do Proxy (opcional)</h3>
+            <p class="small" style="margin:0 0 8px;">Ex.: <code>https://seu-proxy.exemplo.com/pokemon/cards</code>. Em GitHub Pages, configure aqui um proxy público para evitar CORS. Se o seu proxy oferecer <code>/meta</code>, filtros globais ficarão completos.</p>
+            <input id="proxyUrlInput" class="input" placeholder="https://seu-proxy.exemplo.com/pokemon/cards" value="${escapeHtml(state.customProxyBase || '')}" />
             <div class="row" style="margin-top:12px; justify-content:flex-end; gap:8px;">
                 <button class="btn secondary" id="apiKeyCancel">Cancelar</button>
                 <button class="btn" id="apiKeySave">Salvar</button>
@@ -275,6 +295,9 @@
                 return;
             }
             saveApiKey(val);
+            const proxyVal = (document.getElementById('proxyUrlInput')?.value || '').trim();
+            saveCustomProxy(proxyVal);
+            if (state.customProxyBase) { useProxy = true; }
             el.modal.classList.add('hidden');
             load();
         });
@@ -282,8 +305,15 @@
 
     function init(){
             state.apiKey = loadApiKey();
-            // se estiver servindo via arquivo (file://), proxy não funciona
-            if (location.protocol === 'file:') useProxy = false;
+            // Em ambientes estáticos (file://) ou GitHub Pages, desabilitar proxy
+            const isGhPages = /\.github\.io$/i.test(location.hostname) || location.hostname === 'github.io';
+            const isFile = location.protocol === 'file:';
+            state.customProxyBase = loadCustomProxy();
+            if (state.customProxyBase) {
+                useProxy = true;
+            } else if (isGhPages || isFile) {
+                useProxy = false;
+            }
         // preencher selects/valores iniciais
         el.limitSelect.value = String(state.limit);
         // preferências
@@ -316,7 +346,9 @@
                     const MAX_EXTRA_PAGES = 5;
                     let fetched = 0;
                     while (filteredCount < state.limit && page <= state.totalPages && fetched < MAX_EXTRA_PAGES){
-                        const base = useProxy ? PROXY_BASE : DIRECT_BASE;
+                        const base = (state.customProxyBase && state.customProxyBase.length)
+                            ? state.customProxyBase
+                            : (useProxy ? PROXY_BASE : DIRECT_BASE);
                         const params = new URLSearchParams();
                         if (state.name) params.set('name', state.name);
                         params.set('limit', String(state.limit));
@@ -375,8 +407,13 @@
         }
 
         async function fetchMeta(){
+            if (!useProxy) return; // não chamar quando sem proxy
             try{
-                const res = await fetch('/proxy/pokemon/meta');
+                const base = (state.customProxyBase && state.customProxyBase.length)
+                    ? state.customProxyBase
+                    : PROXY_BASE;
+                const metaUrl = base.replace(/\/?cards\/?$/i, '') + '/meta';
+                const res = await fetch(metaUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const meta = await res.json();
                 state.setOptions = meta.sets || [];
